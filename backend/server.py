@@ -867,22 +867,39 @@ def recipe_details(req: RecipeDetailsRequest):
 def analyze_snapshot(req: SnapshotRequest):
     return geminiRecipe.analyze_snapshot(req.image_base64)
 
+# Simple in-memory cache for reverse geocoding to avoid rate limits
+location_cache = {}
+location_cache_lock = Lock()
+
 @app.get("/api/location/name")
 def get_location_name(lat: float, lon: float):
     """
     Reverse geocodes coordinates to a friendly display name.
     """
+    # Use rounded coordinates as cache key (approx 10m precision)
+    cache_key = (round(lat, 5), round(lon, 5))
+    
+    with location_cache_lock:
+        if cache_key in location_cache:
+            # print(f"[Location Cache] Hit for {cache_key}")
+            return location_cache[cache_key]
+
     try:
         from geopy.geocoders import Nominatim
-        geolocator = Nominatim(user_agent="smartfridge_ai_2025")
-        location = geolocator.reverse((lat, lon), exactly_one=True, timeout=5)
+        # Use a more unique User-Agent to avoid generic blocking
+        geolocator = Nominatim(user_agent=f"smartfridge_app_v2_{os.getenv('DEVICE_ID', 'default')}")
+        
+        # Respect Nominatim's 1-request-per-second policy
+        import time
+        time.sleep(1.0) 
+        
+        location = geolocator.reverse((lat, lon), exactly_one=True, timeout=10)
         if location:
             full_address = location.address
             addr_parts = full_address.split(', ')
-            
-            # If the first part is a specific venue (like a cafe, shop, etc.), remove it
-            # Nominatim often puts the POI name as the first element
             raw_addr = location.raw.get('address', {})
+            
+            # Logic to strip POI names if they are the first part
             poi_keys = ['amenity', 'shop', 'tourism', 'leisure', 'office', 'highway']
             poi_name = None
             for key in poi_keys:
@@ -890,30 +907,30 @@ def get_location_name(lat: float, lon: float):
                     poi_name = raw_addr[key]
                     break
             
-            # If the first part matches a known POI name, strip it
             if len(addr_parts) > 1 and (poi_name and addr_parts[0].lower() == poi_name.lower()):
                 full_address = ', '.join(addr_parts[1:])
             elif len(addr_parts) > 1 and raw_addr.get('house_number') is None and raw_addr.get('road'):
-                 # Fallback: if first part isn't 'road' or 'house_number', it's likely a POI
                  if addr_parts[0] != raw_addr.get('road') and addr_parts[0] != raw_addr.get('postcode'):
                      full_address = ', '.join(addr_parts[1:])
 
-            print(f"\n[Location Debug] Coordinates: {lat}, {lon}")
-            print(f"[Location Debug] Full Address (Refined): {full_address}\n")
-            
-            addr = raw_addr
-            # Try to build a concise name: Suburb/City, State
-            city = addr.get('city') or addr.get('town') or addr.get('suburb') or addr.get('county')
-            state = addr.get('state')
+            city = raw_addr.get('city') or raw_addr.get('town') or raw_addr.get('suburb') or raw_addr.get('county')
+            state = raw_addr.get('state')
             
             concise_name = addr_parts[0]
             if city and state:
                 concise_name = f"{city}, {state}"
                 
-            return {
+            result = {
                 "name": concise_name,
                 "fullAddress": full_address
             }
+            
+            # Store in cache
+            with location_cache_lock:
+                location_cache[cache_key] = result
+                
+            return result
+            
     except Exception as e:
         print(f"Reverse geocode error: {e}")
     

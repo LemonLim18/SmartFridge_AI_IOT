@@ -49,8 +49,20 @@ IR_PIN = int(os.getenv("IR_PIN", 24))
 LED_PIN = int(os.getenv("LED_PIN", 18))            # Physical Pin 12
 LED_DURATION = int(os.getenv("LED_DURATION", 10))  # Seconds to stay on for capture
 
-# CircuitPython style
-sensor = adafruit_dht.DHT11(board.D4)
+# DHT11 setup - Avoid GPIO 4 (default for 1-Wire)
+DHT_PIN_ID = int(os.getenv("DHT_PIN", 17)) # Changed default to 17 to avoid 1-Wire conflict on Pin 4
+
+def get_board_pin(pin_id):
+    """Helper to map integer GPIO IDs to board pins"""
+    return getattr(board, f"D{pin_id}")
+
+try:
+    sensor_pin = get_board_pin(DHT_PIN_ID)
+    sensor = adafruit_dht.DHT11(sensor_pin)
+    print(f"[Sensors] DHT11 initialized on GPIO {DHT_PIN_ID}")
+except Exception as e:
+    print(f"[Sensors] ERROR: Could not initialize DHT11 on GPIO {DHT_PIN_ID}: {e}")
+    sensor = None
 
 # sensor timings
 DHT_INTERVAL = float(os.getenv("DHT_INTERVAL", 4.0))

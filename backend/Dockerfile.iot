@@ -1,0 +1,33 @@
+# Dockerfile.iot
+FROM python:3.11-slim
+
+# Install system dependencies for GPIO and Camera
+# Install system dependencies for GPIO
+RUN apt-get update && apt-get install -y \
+    libgpiod-dev \
+    python3-libgpiod \
+    gcc \
+    libc6-dev \
+    # Note: libcamera-apps-lite is specific to Raspberry Pi OS. 
+    # If you need rpicam-still, consider using an image like:
+    # balenalib/raspberrypi3-debian-python:3.11-run
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements_iot.txt .
+RUN pip install --no-cache-dir -r requirements_iot.txt
+
+# Copy only the necessary IoT logic
+COPY iot_code.py .
+COPY item_dictionary.py .
+
+# Standard IoT environment variables
+ENV MQTT_BROKER=104.198.67.66
+ENV DEVICE_ID=fridge-01
+ENV IR_PIN=24
+ENV LED_PIN=18
+ENV DHT_PIN=17
+
+CMD ["python", "iot_code.py"]

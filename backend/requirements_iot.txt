@@ -1,0 +1,6 @@
+RPi.GPIO
+adafruit-blinka
+adafruit-circuitpython-dht
+paho-mqtt
+supabase
+requests
