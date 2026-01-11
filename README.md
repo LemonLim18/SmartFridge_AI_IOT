@@ -415,19 +415,6 @@ The database stores:
 
 ---
 
-## 🎥 Demo Links
-
-- **YouTube demo video**: _Paste your link here_
-- **Repository link**: _Paste your GitHub/GitLab link here_
-
----
-
-## 🤝 Contributing
-
-This project was developed for the **CST357 Real-time Systems & IoT** course. Contributions and improvements are welcome!
-
----
-
 ## 📄 License
 
 This project is for educational purposes. All data sourced from [data.gov.my](https://data.gov.my) is subject to their licensing terms.
