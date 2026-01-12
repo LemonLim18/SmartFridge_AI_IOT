@@ -4,6 +4,12 @@ A modern, AI-powered Smart Fridge ecosystem built for the ultimate kitchen manag
 
 > **Course Prototype (CST357 Real-time Systems & IoT)**: This repo contains the full source code for the **frontend**, **backend**, and **edge device programs**, including MQTT-based device-to-cloud messaging, Supabase persistence, and a web dashboard.
 
+
+Uploading SmartFridge AIOT.mp4…
+
+Uploading SmartFridge AIOT.mp4…
+
+
 ---
 
 ## 📚 Table of Contents
