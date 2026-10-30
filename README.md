@@ -10,16 +10,41 @@ A key feature is the **location-aware grocery store finder**, which combines the
 
 ---
 
-## 🎬 Demonstrations
+## 🎬 Project Demonstrations
 
 The project has two separate demonstrations: one showing the physical IoT prototype and another focusing on the application interface and its features.
-### Physical Demonstration
-[![SmartFridge AI IoT — Physical Demonstration](docs/images/app-only-demo-preview.jpg)](https://youtu.be/7mcuQvQeb7c)
 
-### Application-Only Demonstration
-[![SmartFridge AI IoT — Application Walkthrough](docs/images/app-only-demo-preview.jpg)](https://youtu.be/4PdawfRptzo)
+<h3>🎬 Project Demonstrations</h3>
 
-> The application-only recording is included in this repository under `docs/videos/`. If you upload it to YouTube, replace the MP4 link above with its YouTube URL.
+<table>
+  <tr>
+    <th width="35%">Application-Only Demonstration</th>
+    <th width="65%">Physical Demonstration</th>
+  </tr>
+  <tr>
+    <td width="35%" align="center" valign="middle">
+      <a href="https://youtu.be/4PdawfRptzo">
+        <img
+          src="docs/images/app-thumbnail-1.png"
+          alt="Application-Only Demonstration"
+          width="100%"
+          height="550"
+          style="object-fit: contain;">
+      </a>
+    </td>
+    <td width="65%" align="center" valign="middle">
+      <a href="https://youtu.be/7mcuQvQeb7c">
+        <img
+          src="docs/images/app-thumbnail-2.png"
+          alt="Physical Demonstration"
+          width="100%"
+          height="500"
+          style="object-fit: contain;">
+      </a>
+    </td>
+  </tr>
+</table>
+
 
 ---
 
@@ -69,12 +94,23 @@ The store finder connects inventory needs with real grocery price information.
 - Helps users identify convenient stores and lower-priced purchasing options.
 - Connects low-stock items with grocery searches and replenishment decisions.
 
-### 6. Shopping List & User Notifications
+### 6. Email Alerts & Cross-Device Notifications
 
-- Adds items from low-stock inventory or through manual entry.
-- Allows users to mark items as purchased.
-- Displays low-stock warnings and refrigerator anomaly reminders.
-- Provides profile settings for alert preferences and the email address used for notifications.
+Users can bind an email address to their profile and configure email alert preferences. When the system detects relevant refrigerator conditions, it can send notifications to that address as an additional channel alongside the web dashboard.
+
+- Associate a user email address with the SmartFridge profile.
+- Receive email alerts for detected conditions, including door-state, temperature and humidity alerts.
+- Access notifications through an email client on a laptop or another device, even when the SmartFridge dashboard is not open or actively being monitored.
+- Complement in-app notifications with an external notification channel, reducing reliance on keeping the website visible.
+
+An example of the delivered door, temperature and humidity alert emails is included in the Application Screenshots section.
+
+### 7. Shopping List & In-App Notifications
+
+- Add items from low-stock inventory or through manual entry.
+- Mark items as purchased.
+- Display low-stock warnings and refrigerator anomaly reminders within the web application.
+- Manage notification preferences and the email address used for alert delivery through user profile settings.
 
 ---
 
@@ -92,9 +128,10 @@ The architecture diagram below shows the complete data flow from the sensors and
 | Edge devices | Raspberry Pi 2 Model B | Reads temperature/humidity and door state; controls camera capture and lighting |
 | Edge devices | Maker Feather AIoT S3 | Reads the freezer water-level sensor and publishes freezer status |
 | Messaging | MQTT broker on a GCP VM | Routes telemetry, capture URLs and capture commands between devices and backend |
-| Backend | FastAPI | Subscribes to MQTT topics, processes events, handles image analysis and serves application APIs |
+| Backend | FastAPI | Subscribes to MQTT topics, processes events, handles image analysis, serves application APIs and triggers configured email alerts |
 | Storage | Supabase | Stores snapshots, inventory results and resolved anomaly records |
-| Frontend | React / TypeScript | Displays live conditions, inventory, alerts, recipes and grocery recommendations |
+| Frontend | React / TypeScript | Displays live conditions, inventory, alerts, recipes, grocery recommendations and user notification settings |
+| Email notifications | User-bound email address | Delivers alert messages outside the active web dashboard |
 
 ### Data Flow
 
@@ -104,32 +141,75 @@ The architecture diagram below shows the complete data flow from the sensors and
 4. The backend keeps the latest sensor values available for live display and selectively persists meaningful records in Supabase.
 5. The React dashboard retrieves application data through REST APIs and receives live changes through WebSockets.
 6. For inventory capture, the Raspberry Pi uploads a snapshot to Supabase Storage and publishes the resulting image URL through MQTT. The backend retrieves the image, sends it to Gemini Flash and stores the extracted inventory results.
+7. When email alerts are enabled, the backend sends relevant condition notifications to the email address associated with the user's profile. This provides an additional way to receive alerts when the dashboard is not being watched.
 
 ---
 
 ## 🖥️ Application Screenshots
 
-The following screenshots are taken from the project demonstration and technical report. The personal profile screen is omitted from the public gallery because it contains account-specific information.
+The following screenshots are taken from the project demonstration, technical report and email-alert test. The personal profile screen is omitted from the public gallery because it contains account-specific information. The application-only video preview is available in the Demonstrations section above.
 
-| Live Dashboard | Notifications |
-|---|---|
-| ![SmartFridge live dashboard](docs/images/dashboard.png) | ![SmartFridge notifications](docs/images/notifications.png) |
-| Live temperature, humidity, door and freezer status, with low-stock items. | Low-stock warnings and anomaly reminders. |
 
-| Alert History | Food Inventory |
-|---|---|
-| ![SmartFridge anomaly history](docs/images/anomaly-history.png) | ![SmartFridge food inventory](docs/images/inventory.png) |
-| Stored summaries of resolved refrigerator and freezer events. | Latest refrigerator snapshot and AI-extracted stock list. |
+<table>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <strong>Live Dashboard</strong><br><br>
+      <img src="docs/images/dashboard.png"
+           alt="SmartFridge live dashboard" width="200"><br>
+      Live temperature, humidity, door and freezer status, with low-stock items.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <strong>Notifications</strong><br><br>
+      <img src="docs/images/notifications.png"
+           alt="SmartFridge notifications" width="200"><br>
+      Low-stock warnings and anomaly reminders.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <strong>Alert History</strong><br><br>
+      <img src="docs/images/anomaly-history.png"
+           alt="SmartFridge anomaly history" width="200"><br>
+      Stored summaries of resolved refrigerator and freezer events.
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <strong>Food Inventory</strong><br><br>
+      <img src="docs/images/inventory.png"
+           alt="SmartFridge food inventory" width="200"><br>
+      Latest refrigerator snapshot and AI-extracted stock list.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <strong>Grocery Store Finder</strong><br><br>
+      <img src="docs/images/store-finder.png"
+           alt="SmartFridge grocery store finder" width="200"><br>
+      Nearby stores and comparable grocery prices.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <strong>Chef AI</strong><br><br>
+      <img src="docs/images/chef-ai.png"
+           alt="SmartFridge Chef AI" width="200"><br>
+      Recipe suggestions based on available ingredients and user input.
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <strong>To-Buy List</strong><br><br>
+      <img src="docs/images/shopping-list.png"
+           alt="SmartFridge shopping list" width="200"><br>
+      Shopping reminders from low-stock items or manual entries.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <strong>Email Alerts</strong><br><br>
+      <img src="docs/images/email-notification.jpeg"
+           alt="SmartFridge email notifications" width="200"><br>
+      Example alert emails delivered to the user's bound email address.
+    </td>
+    <td width="33%" align="center" valign="top">
+      <!-- Reserved for future feature -->
+    </td>
+  </tr>
+</table>
 
-| Grocery Store Finder | Chef AI |
-|---|---|
-| ![SmartFridge grocery store finder](docs/images/store-finder.png) | ![SmartFridge Chef AI](docs/images/chef-ai.png) |
-| Nearby stores and comparable grocery prices. | Recipe suggestions based on available ingredients and user input. |
-
-| To-Buy List | Application-Only Demonstration |
-|---|---|
-| ![SmartFridge shopping list](docs/images/shopping-list.png) | [![Application-only walkthrough preview](docs/images/app-only-demo-preview.jpg)](docs/videos/app-only-demo.mp4) |
-| Shopping reminders from low-stock items or manual entries. | Select the preview to open the app-only MP4 walkthrough. |
 
 ---
 
@@ -392,6 +472,7 @@ The tree above shows the main project areas and the documentation assets added f
 - Do not commit `.env` files, API keys, MQTT passwords or Supabase credentials.
 - Keep Gemini credentials on the backend; do not expose them in frontend environment variables.
 - Restrict MQTT broker access and use authentication.
+- Protect email-delivery credentials and keep them out of source control.
 - Apply appropriate access controls to Supabase Storage and database resources.
 - Review third-party API usage limits and the terms governing external datasets.
 
