@@ -159,7 +159,7 @@ The following screenshots are taken from the project demonstration, technical re
       Live temperature, humidity, door and freezer status, with low-stock items.
     </td>
     <td width="33%" align="center" valign="top">
-      <strong>Notifications</strong><br><br>
+      <strong>Info & Notifications</strong><br><br>
       <img src="docs/images/notifications.png"
            alt="SmartFridge notifications" width="200"><br>
       Low-stock warnings and anomaly reminders.
@@ -199,13 +199,17 @@ The following screenshots are taken from the project demonstration, technical re
       Shopping reminders from low-stock items or manual entries.
     </td>
     <td width="33%" align="center" valign="top">
+      <strong>Email Notification Settings</strong><br><br>
+      <img src="docs/images/email-binding.jpg"
+           alt="SmartFridge email notifications" width="200"><br>
+      Email address binding & Notification Enablement
+    </td>
+    </td>
+    <td width="33%" align="center" valign="top">
       <strong>Email Alerts</strong><br><br>
       <img src="docs/images/email-notification.jpeg"
            alt="SmartFridge email notifications" width="200"><br>
-      Example alert emails delivered to the user's bound email address.
-    </td>
-    <td width="33%" align="center" valign="top">
-      <!-- Reserved for future feature -->
+       Alert emails delivered to the user's bound email address.
     </td>
   </tr>
 </table>
