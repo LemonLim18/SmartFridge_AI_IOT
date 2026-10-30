@@ -13,12 +13,11 @@ A key feature is the **location-aware grocery store finder**, which combines the
 ## 🎬 Demonstrations
 
 The project has two separate demonstrations: one showing the physical IoT prototype and another focusing on the application interface and its features.
-
 ### Physical Demonstration
-[![SmartFridge AI IoT — Physical Demonstration](https://img.youtube.com/vi/7mcuQvQeb7c/hqdefault.jpg)](https://youtu.be/7mcuQvQeb7c)
+[![SmartFridge AI IoT — Physical Demonstration](docs/images/app-only-demo-preview.jpg)](https://youtu.be/7mcuQvQeb7c)
 
 ### Application-Only Demonstration
-[![SmartFridge AI IoT — Application Walkthrough](docs/images/app-only-demo-preview.jpg)](docs/videos/app-only-demo.mp4)
+[![SmartFridge AI IoT — Application Walkthrough](docs/images/app-only-demo-preview.jpg)](https://youtu.be/4PdawfRptzo)
 
 > The application-only recording is included in this repository under `docs/videos/`. If you upload it to YouTube, replace the MP4 link above with its YouTube URL.
 
